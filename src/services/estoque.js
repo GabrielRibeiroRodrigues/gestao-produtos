@@ -1,4 +1,5 @@
 import database, { getAllRows, executeQuery, getFirstRow } from '../database/database';
+import { verificarEstoqueENotificar } from './notificacao';
 
 // Função para verificar se há estoque suficiente
 export const verificarEstoque = (produtoId, subsetorId, quantidade) => {
@@ -21,7 +22,7 @@ export const verificarEstoque = (produtoId, subsetorId, quantidade) => {
 };
 
 // Função para atualizar estoque
-export const atualizarEstoque = (produtoId, subsetorId, quantidade, operacao = 'adicionar') => {
+export const atualizarEstoque = async (produtoId, subsetorId, quantidade, operacao = 'adicionar') => {
   try {
     // Primeiro, verificar se o produto já existe no estoque do subsetor
     const estoqueExistente = getFirstRow(
@@ -42,6 +43,10 @@ export const atualizarEstoque = (produtoId, subsetorId, quantidade, operacao = '
       );
       
       console.log(`Estoque atualizado: ${novaQuantidade}`);
+      
+      // Verificar se precisa notificar sobre o estoque
+      await verificarEstoqueENotificar(produtoId, subsetorId, novaQuantidade);
+      
       return novaQuantidade;
     } else {
       // Produto não existe no estoque deste subsetor, criar novo registro
@@ -52,6 +57,10 @@ export const atualizarEstoque = (produtoId, subsetorId, quantidade, operacao = '
         );
         
         console.log(`Novo registro de estoque criado com quantidade: ${quantidade}`);
+        
+        // Verificar se precisa notificar sobre o estoque
+        await verificarEstoqueENotificar(produtoId, subsetorId, quantidade);
+        
         return quantidade;
       } else {
         throw new Error('Não é possível remover de um estoque que não existe');

@@ -191,6 +191,36 @@ export async function initDatabase() {
           FOREIGN KEY (produto_saida_id) REFERENCES DetalheProduto(id),
           FOREIGN KEY (produto_id) REFERENCES DetalheProduto(id)
       );
+
+      -- Tabela ConfiguracaoNotificacao
+      CREATE TABLE IF NOT EXISTS ConfiguracaoNotificacao (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          produto_id INTEGER NOT NULL,
+          subsetor_id INTEGER NOT NULL,
+          estoque_minimo INTEGER NOT NULL DEFAULT 0,
+          estoque_maximo INTEGER,
+          notificacao_ativa BOOLEAN NOT NULL DEFAULT 1,
+          data_criacao TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          data_atualizacao TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (produto_id) REFERENCES DetalheProduto(id),
+          FOREIGN KEY (subsetor_id) REFERENCES SetorSub(id),
+          UNIQUE(produto_id, subsetor_id)
+      );
+
+      -- Tabela HistoricoNotificacao
+      CREATE TABLE IF NOT EXISTS HistoricoNotificacao (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          produto_id INTEGER NOT NULL,
+          subsetor_id INTEGER NOT NULL,
+          tipo_notificacao TEXT NOT NULL, -- 'ESTOQUE_BAIXO', 'ESTOQUE_ALTO', 'ESTOQUE_ZERADO'
+          quantidade_atual INTEGER NOT NULL,
+          limite_configurado INTEGER NOT NULL,
+          mensagem TEXT NOT NULL,
+          data_notificacao TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          lida BOOLEAN NOT NULL DEFAULT 0,
+          FOREIGN KEY (produto_id) REFERENCES DetalheProduto(id),
+          FOREIGN KEY (subsetor_id) REFERENCES SetorSub(id)
+      );
     `);
     
     console.log('Tabelas criadas com sucesso!');

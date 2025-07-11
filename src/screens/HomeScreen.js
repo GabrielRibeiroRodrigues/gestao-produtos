@@ -68,6 +68,20 @@ const HomeScreen = ({ navigation }) => {
       color: '#6c757d',
       icon: '👤',
     },
+    {
+      title: 'Notificações',
+      description: 'Alertas e notificações de estoque',
+      screen: 'NotificacoesScreen',
+      color: '#ff6b6b',
+      icon: '🔔',
+    },
+    {
+      title: 'Configurar Notificações',
+      description: 'Gerenciar limites de estoque',
+      screen: 'ConfiguracaoNotificacoes',
+      color: '#4ecdc4',
+      icon: '⚙️',
+    },
   ];
 
   const renderMenuItem = (item, index) => (
